@@ -1,9 +1,9 @@
 import { useRouter } from 'next/router';
-import AddNotice from '../../components/notices/AddNotice';
-import useAdmin from '../../libs/hooks/useAdmin';
-import useAddNotice from './hooks/useAddNotice';
+import AddNotice from '../../../components/notices/AddNotice';
+import useAdmin from '../../../libs/hooks/useAdmin';
+import useAddNotice from '../hooks/useAddNotice';
 
-function AddNoticePage() {
+function EditNoticePage() {
   const router = useRouter();
   const { loading, error } = useAdmin();
   const {
@@ -17,7 +17,7 @@ function AddNoticePage() {
     onThumbnail,
     onList,
     onAddNotice,
-  } = useAddNotice(false);
+  } = useAddNotice(true);
 
   if (loading) return <div>Loading...</div>;
   if (!loading && error) {
@@ -26,7 +26,7 @@ function AddNoticePage() {
 
   return (
     <AddNotice
-      edit={false}
+      edit={true}
       title={title}
       body={body}
       thumbnail={thumbnail}
@@ -41,4 +41,4 @@ function AddNoticePage() {
   );
 }
 
-export default AddNoticePage;
+export default EditNoticePage;

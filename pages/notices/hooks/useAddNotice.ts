@@ -1,8 +1,16 @@
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { ChangeEvent, MouseEvent, useCallback, useState } from 'react';
+import {
+  ChangeEvent,
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { toast } from 'react-toastify';
+import { useRecoilValueLoadable } from 'recoil';
 import { devServer, isProd, prodServer } from '../../../libs/constants';
+import { ReadNotice } from '../../../libs/store/notice';
 
 axios.defaults.baseURL = 'http://localhost:4000/api';
 axios.defaults.withCredentials = true;
@@ -10,6 +18,7 @@ axios.defaults.withCredentials = true;
 export default function useAddNotice(edit: boolean) {
   const router = useRouter();
   const { id }: { id?: string } = router.query;
+  const data = useRecoilValueLoadable(ReadNotice(id));
 
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
@@ -28,8 +37,8 @@ export default function useAddNotice(edit: boolean) {
     setTags(nextTags);
   }, []);
 
-  const onBack = () => {
-    router.back();
+  const onList = () => {
+    router.push('/notices');
   };
 
   const onThumbnail = () => {
@@ -77,23 +86,48 @@ export default function useAddNotice(edit: boolean) {
       let overlapTags =
         tags === [] ? [] : [...new Set(tags.map((tag) => tag.trim()))];
 
-      const response = await axios.post('/notices', {
-        title,
-        body,
-        thumbnail,
-        tags: overlapTags,
-      });
+      if (!edit) {
+        const response = await axios.post('/notices', {
+          title,
+          body,
+          thumbnail,
+          tags: overlapTags,
+        });
 
-      if (!response) {
-        toast.error(response.statusText);
-        return;
+        if (!response) {
+          toast.error(response.statusText);
+          return;
+        }
+
+        router.push('/notices');
+      } else {
+        const response = await axios.patch(`/notices/${id}`, {
+          title,
+          body,
+          thumbnail,
+          tags: overlapTags,
+        });
+
+        if (!response) {
+          toast.error(response.statusText);
+          return;
+        }
+
+        document.location.href = `/notices/${id}`;
       }
-
-      router.push('/notices');
     } catch (err) {
       toast.error(err);
     }
   };
+
+  useEffect(() => {
+    if (data && data.state === 'hasValue') {
+      setTitle(data.contents.title);
+      setBody(data.contents.body);
+      setThumbnail(data.contents.thumbnail);
+      setTags(data.contents.tags);
+    }
+  }, [edit]);
 
   return {
     title,
@@ -104,7 +138,7 @@ export default function useAddNotice(edit: boolean) {
     onChangeBody,
     onChangeTags,
     onThumbnail,
-    onBack,
+    onList,
     onAddNotice,
   };
 }

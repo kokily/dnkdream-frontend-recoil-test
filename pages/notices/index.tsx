@@ -25,7 +25,11 @@ function ListNoticesPage() {
             >
               {notice.title}
             </h3>
-            <p>{removeHtml(notice.body.slice(0, 15))}...</p>
+            <p>
+              {notice.body.length > 25
+                ? `${removeHtml(notice.body.slice(0, 25))}...`
+                : removeHtml(notice.body)}
+            </p>
             <ul>
               {notice.tags.map((tag) => (
                 <li key={tag} style={{ cursor: 'pointer', color: 'skyblue' }}>

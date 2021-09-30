@@ -55,7 +55,7 @@ interface Props {
   onChangeTitle: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onChangeBody: (text: string) => void;
   onChangeTags: (nextTags: string[]) => void;
-  onBack: () => void;
+  onList: () => void;
   onThumbnail: () => void;
   onAddNotice: (e: React.MouseEvent) => void;
 }
@@ -69,7 +69,7 @@ const AddNotice: React.FC<Props> = ({
   onChangeTitle,
   onChangeBody,
   onChangeTags,
-  onBack,
+  onList,
   onThumbnail,
   onAddNotice,
 }) => {
@@ -100,7 +100,7 @@ const AddNotice: React.FC<Props> = ({
           <EditorBody edit={edit} QuillChange={onChangeBody} body={body} />
         </Wrapper>
 
-        <EditorFooter onBack={onBack} onSubmit={onAddNotice} />
+        <EditorFooter onList={onList} onSubmit={onAddNotice} />
       </EditorBox>
     </Container>
   );

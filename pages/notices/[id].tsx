@@ -7,7 +7,7 @@ import useReadNotice from './hooks/useReadNotice';
 
 function ReadNoticePage() {
   const { data: me, loading: meLoading } = useAdmin();
-  const { data, loading, error, onBack, onRemove } = useReadNotice();
+  const { data, loading, error, onBack, onRemove, onUpdate } = useReadNotice();
 
   if (loading || meLoading) return <div>Loading...</div>;
   if (error) return null;
@@ -19,6 +19,7 @@ function ReadNoticePage() {
         {me && (
           <>
             <button onClick={onRemove}>삭제하기</button>
+            <button onClick={onUpdate}>수정하기</button>
           </>
         )}
       </div>

@@ -26,7 +26,7 @@ export default function useReadNotice() {
 
         if (!response) return;
 
-        router.back();
+        document.location.href = '/notices';
       } catch (err) {
         setError(err);
         toast.error(error);
@@ -34,6 +34,10 @@ export default function useReadNotice() {
     } else {
       return;
     }
+  };
+
+  const onUpdate = () => {
+    router.push(`/notices/edit/${id}`);
   };
 
   useEffect(() => {
@@ -58,5 +62,6 @@ export default function useReadNotice() {
     error,
     onBack,
     onRemove,
+    onUpdate,
   };
 }

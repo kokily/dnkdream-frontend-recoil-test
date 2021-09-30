@@ -21,14 +21,14 @@ const Container = styled.div`
 `;
 
 interface Props {
-  onBack: () => void;
+  onList: () => void;
   onSubmit: (e: React.MouseEvent) => void;
 }
 
-const EditorFooter: React.FC<Props> = ({ onBack, onSubmit }) => {
+const EditorFooter: React.FC<Props> = ({ onList, onSubmit }) => {
   return (
     <Container>
-      <Button back onClick={onBack}>
+      <Button back onClick={onList}>
         뒤로가기
       </Button>
       <Button submit onClick={onSubmit}>
