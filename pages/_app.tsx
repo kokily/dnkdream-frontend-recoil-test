@@ -1,8 +1,16 @@
 import { AppProps } from 'next/app';
 import { RecoilRoot } from 'recoil';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import 'react-quill/dist/quill.snow.css';
+import { meState } from '../libs/store/auth';
+import { Notices } from '../libs/store/notices';
 
 // Recoil SSR config
-const allAtoms = {};
+const allAtoms = {
+  auth: meState,
+  notices: Notices,
+};
 
 const initRecoilState =
   (initialState) =>
@@ -19,6 +27,7 @@ function App({ Component, pageProps }: AppProps) {
     <>
       <RecoilRoot initializeState={initRecoilState({})}>
         <Component {...pageProps} />
+        <ToastContainer position="top-center" draggable={false} />
       </RecoilRoot>
     </>
   );
