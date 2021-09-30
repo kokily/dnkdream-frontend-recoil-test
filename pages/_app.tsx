@@ -5,11 +5,13 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'react-quill/dist/quill.snow.css';
 import { meState } from '../libs/store/auth';
 import { Notices } from '../libs/store/notices';
+import { Notice } from '../libs/store/notice';
 
 // Recoil SSR config
 const allAtoms = {
   auth: meState,
   notices: Notices,
+  notice: Notice,
 };
 
 const initRecoilState =

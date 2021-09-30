@@ -1,45 +1,24 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import qs from 'qs';
 import _concat from 'lodash/concat';
 import { toast } from 'react-toastify';
 import { devServer, isProd, prodServer } from '../../../libs/constants';
+import { useRecoilValueLoadable } from 'recoil';
+import { ListNotices } from '../../../libs/store/notices';
 
 axios.defaults.baseURL = isProd ? prodServer : devServer;
 axios.defaults.withCredentials = true;
 
 export default function useListNotices() {
   const router = useRouter();
-
-  // Search
-  const [title, setTitle] = useState('');
-  const [search, setSearch] = useState('');
-  const [tag, setTag] = useState('');
   const [page, setPage] = useState(1);
 
   // Recoil State
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error>(null);
   const [data, setData] = useState<NoticeType[]>([]);
-
-  const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
-  }, []);
-
-  const onSearch = (e: React.MouseEvent) => {
-    e.preventDefault();
-
-    if (search === '') {
-      return;
-    } else {
-      setTitle(search);
-    }
-  };
-
-  const onTag = (tag: string) => {
-    setTag(tag);
-  };
+  const notices = useRecoilValueLoadable(ListNotices({ page }));
 
   const onReadNotice = (id: string) => {
     router.push(`/notices/${id}`);
@@ -49,26 +28,21 @@ export default function useListNotices() {
     router.back();
   };
 
-  const fetchData = async () => {
-    setLoading(true);
-
-    try {
-      const queryString = qs.stringify({ title, tag, page });
-      const response = await axios.get(`/notices?${queryString}`);
-
-      setData(_concat(data, response.data));
-      setLoading(false);
-    } catch (err) {
-      setLoading(false);
-      setError(err);
-
-      toast.error(error);
-    }
-  };
-
   useEffect(() => {
-    fetchData();
-  }, [page]);
+    switch (notices.state) {
+      case 'loading':
+        setLoading(true);
+        break;
+      case 'hasError':
+        setLoading(false);
+        setError(notices.errorOrThrow);
+        break;
+      case 'hasValue':
+        setLoading(false);
+        setData(_concat(data, notices.contents));
+        break;
+    }
+  }, [notices.contents]);
 
   useEffect(() => {
     // 얼마나 스크롤을 내렸는지
@@ -97,10 +71,6 @@ export default function useListNotices() {
     data,
     loading,
     error,
-    search,
-    onChange,
-    onSearch,
-    onTag,
     onBack,
     onReadNotice,
   };
