@@ -16,7 +16,7 @@ const _getNoticesTrigger = atom<number>({
   default: 0,
 });
 
-export const ListNotices = selectorFamily<NoticeType[], { page?: string }>({
+export const ListNotices = selectorFamily<NoticeType[], { page?: number }>({
   key: 'ListNotices',
   get:
     ({ page }) =>

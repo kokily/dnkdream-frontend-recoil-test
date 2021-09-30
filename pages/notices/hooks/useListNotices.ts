@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import _concat from 'lodash/concat';
-import { toast } from 'react-toastify';
 import { devServer, isProd, prodServer } from '../../../libs/constants';
 import { useRecoilValueLoadable } from 'recoil';
 import { ListNotices } from '../../../libs/store/notices';
@@ -24,8 +23,8 @@ export default function useListNotices() {
     router.push(`/notices/${id}`);
   };
 
-  const onBack = () => {
-    router.back();
+  const onAddNotice = () => {
+    router.push('/notices/add');
   };
 
   useEffect(() => {
@@ -71,7 +70,7 @@ export default function useListNotices() {
     data,
     loading,
     error,
-    onBack,
     onReadNotice,
+    onAddNotice,
   };
 }

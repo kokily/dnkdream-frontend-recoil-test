@@ -5,13 +5,14 @@ import { removeHtml } from '../../libs/utils';
 import useListNotices from './hooks/useListNotices';
 
 function ListNoticesPage() {
-  const { data, loading, error, onReadNotice, onBack } = useListNotices();
+  const { data, loading, error, onReadNotice, onAddNotice } = useListNotices();
 
   if (loading) return <div>Loading...</div>;
   if (error) return null;
 
   return (
     <div>
+      <button onClick={onAddNotice}>공지 작성</button>
       <h2>List Notices</h2>
 
       {!loading &&
