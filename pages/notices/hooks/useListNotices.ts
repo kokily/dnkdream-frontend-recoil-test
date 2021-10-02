@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import _concat from 'lodash/concat';
@@ -12,12 +12,25 @@ axios.defaults.withCredentials = true;
 export default function useListNotices() {
   const router = useRouter();
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
 
   // Recoil State
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error>(null);
   const [data, setData] = useState<NoticeType[]>([]);
   const notices = useRecoilValueLoadable(ListNotices({ page }));
+
+  const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  }, []);
+
+  const onSearch = useCallback(() => {
+    if (search === '') {
+      return;
+    } else {
+      router.push(`/search/${search}`);
+    }
+  }, []);
 
   const onReadNotice = (id: string) => {
     router.push(`/notices/${id}`);
@@ -77,5 +90,8 @@ export default function useListNotices() {
     onReadNotice,
     onAddNotice,
     onTag,
+    search,
+    onChange,
+    onSearch,
   };
 }

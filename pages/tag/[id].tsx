@@ -1,12 +1,32 @@
 import axios from 'axios';
+import styled from 'styled-components';
 import { GetServerSideProps } from 'next';
 import { devServer, isProd, prodServer } from '../../libs/constants';
 import { removeHtml } from '../../libs/utils';
 import useTagListNotices from './hooks/useTagListNotices';
 
+const Span = styled.span`
+  font-size: 1rem;
+  color: #777777;
+  cursor: pointer;
+  transition: 0.12s all;
+
+  &:hover {
+    color: red;
+  }
+`;
+
 function TagListNotices() {
-  const { data, loading, error, onReadNotice, onAddNotice, onTag } =
-    useTagListNotices();
+  const {
+    data,
+    loading,
+    error,
+    onReadNotice,
+    onAddNotice,
+    onTag,
+    onMain,
+    selectedTag,
+  } = useTagListNotices();
 
   if (loading) return <div>Loading...</div>;
   if (error) return null;
@@ -15,6 +35,10 @@ function TagListNotices() {
     <div>
       <button onClick={onAddNotice}>공지 작성</button>
       <h2>List Notices</h2>
+
+      <h3>
+        선택된 태그 <Span onClick={onMain}>{selectedTag}(x)</Span>
+      </h3>
 
       {!loading &&
         data &&

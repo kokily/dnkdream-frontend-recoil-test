@@ -1,10 +1,22 @@
-import axios from 'axios';
 import { GetServerSideProps } from 'next';
+import axios from 'axios';
+import styled from 'styled-components';
 import { devServer, isProd, prodServer } from '../../libs/constants';
 import { removeHtml } from '../../libs/utils';
-import useListNotices from './hooks/useListNotices';
+import useSearchNotices from './hooks/useSearchNotices';
 
-function ListNoticesPage() {
+const Span = styled.span`
+  font-size: 1rem;
+  color: #777777;
+  cursor: pointer;
+  transition: 0.12s all;
+
+  &:hover {
+    color: red;
+  }
+`;
+
+function SearchNoticesPage() {
   const {
     data,
     loading,
@@ -13,9 +25,8 @@ function ListNoticesPage() {
     onAddNotice,
     onTag,
     search,
-    onChange,
-    onSearch,
-  } = useListNotices();
+    onMain,
+  } = useSearchNotices();
 
   if (loading) return <div>Loading...</div>;
   if (error) return null;
@@ -24,12 +35,9 @@ function ListNoticesPage() {
     <div>
       <button onClick={onAddNotice}>공지 작성</button>
       <h2>List Notices</h2>
-
-      <div style={{ marginBottom: '1rem' }}>
-        <span style={{ marginRight: '0.5rem' }}>검 색</span>
-        <input type="text" name="search" value={search} onChange={onChange} />
-        <button onClick={onSearch}>검색하기</button>
-      </div>
+      <h3>
+        검색결과 <Span onClick={onMain}>{search}(x)</Span>
+      </h3>
 
       {!loading &&
         data &&
@@ -63,17 +71,19 @@ function ListNoticesPage() {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { id }: { id?: string } = context.params;
+
   axios.defaults.baseURL = isProd ? prodServer : devServer;
   axios.defaults.withCredentials = true;
 
-  const res = await axios.get<NoticeType[]>('/notices');
+  const response = await axios.get<NoticeType[]>(
+    `/notices?title=${encodeURI(id)}`
+  );
 
   return {
-    props: {
-      notices: res.data,
-    },
+    props: { notices: response.data },
   };
 };
 
-export default ListNoticesPage;
+export default SearchNoticesPage;

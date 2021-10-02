@@ -4,21 +4,24 @@ import { useEffect, useState } from 'react';
 import { useRecoilValueLoadable } from 'recoil';
 import _concat from 'lodash/concat';
 import { devServer, isProd, prodServer } from '../../../libs/constants';
-import { TagListNotices } from '../../../libs/store/tagNotices';
+import { SearchListNotices } from '../../../libs/store/searchNotices';
 
 axios.defaults.baseURL = isProd ? prodServer : devServer;
 axios.defaults.withCredentials = true;
 
-export default function useTagListNotices() {
+export default function useSearchNotices() {
   const router = useRouter();
   const { id }: { id?: string } = router.query;
+
   const [page, setPage] = useState(1);
 
   // Recoil State
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error>(null);
   const [data, setData] = useState<NoticeType[]>([]);
-  const notices = useRecoilValueLoadable(TagListNotices({ page, tag: id }));
+  const notices = useRecoilValueLoadable(
+    SearchListNotices({ page, title: id })
+  );
 
   const onReadNotice = (id: string) => {
     router.push(`/notices/${id}`);
@@ -82,7 +85,7 @@ export default function useTagListNotices() {
     onReadNotice,
     onAddNotice,
     onTag,
+    search: id,
     onMain,
-    selectedTag: id,
   };
 }
