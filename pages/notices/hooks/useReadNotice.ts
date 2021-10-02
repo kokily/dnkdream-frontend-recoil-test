@@ -40,6 +40,10 @@ export default function useReadNotice() {
     router.push(`/notices/edit/${id}`);
   };
 
+  const onTag = (tag: string) => {
+    router.push(`/tag/${tag}`);
+  };
+
   useEffect(() => {
     switch (notice.state) {
       case 'loading':
@@ -63,5 +67,6 @@ export default function useReadNotice() {
     onBack,
     onRemove,
     onUpdate,
+    onTag,
   };
 }

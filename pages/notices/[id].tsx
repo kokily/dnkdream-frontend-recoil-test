@@ -7,7 +7,8 @@ import useReadNotice from './hooks/useReadNotice';
 
 function ReadNoticePage() {
   const { data: me, loading: meLoading } = useAdmin();
-  const { data, loading, error, onBack, onRemove, onUpdate } = useReadNotice();
+  const { data, loading, error, onBack, onRemove, onUpdate, onTag } =
+    useReadNotice();
 
   if (loading || meLoading) return <div>Loading...</div>;
   if (error) return null;
@@ -16,7 +17,7 @@ function ReadNoticePage() {
     <div>
       <div>
         <button onClick={onBack}>목록으로</button>
-        {me && (
+        {me.state === 'hasValue' && (
           <>
             <button onClick={onRemove}>삭제하기</button>
             <button onClick={onUpdate}>수정하기</button>
@@ -32,7 +33,9 @@ function ReadNoticePage() {
 
           <ul>
             {data.tags.map((tag) => (
-              <li key={tag}>#{tag}</li>
+              <li key={tag} onClick={() => onTag(tag)}>
+                #{tag}
+              </li>
             ))}
           </ul>
 

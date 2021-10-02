@@ -1,23 +1,24 @@
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
 import axios from 'axios';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { useRecoilValueLoadable } from 'recoil';
 import _concat from 'lodash/concat';
 import { devServer, isProd, prodServer } from '../../../libs/constants';
-import { useRecoilValueLoadable } from 'recoil';
-import { ListNotices } from '../../../libs/store/notices';
+import { TagListNotices } from '../../../libs/store/tagNotices';
 
 axios.defaults.baseURL = isProd ? prodServer : devServer;
 axios.defaults.withCredentials = true;
 
-export default function useListNotices() {
+export default function useTagListNotices() {
   const router = useRouter();
+  const { id }: { id?: string } = router.query;
   const [page, setPage] = useState(1);
 
   // Recoil State
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error>(null);
   const [data, setData] = useState<NoticeType[]>([]);
-  const notices = useRecoilValueLoadable(ListNotices({ page }));
+  const notices = useRecoilValueLoadable(TagListNotices({ page, tag: id }));
 
   const onReadNotice = (id: string) => {
     router.push(`/notices/${id}`);

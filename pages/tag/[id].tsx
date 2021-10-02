@@ -2,11 +2,11 @@ import axios from 'axios';
 import { GetServerSideProps } from 'next';
 import { devServer, isProd, prodServer } from '../../libs/constants';
 import { removeHtml } from '../../libs/utils';
-import useListNotices from './hooks/useListNotices';
+import useTagListNotices from './hooks/useTagListNotices';
 
-function ListNoticesPage() {
+function TagListNotices() {
   const { data, loading, error, onReadNotice, onAddNotice, onTag } =
-    useListNotices();
+    useTagListNotices();
 
   if (loading) return <div>Loading...</div>;
   if (error) return null;
@@ -48,17 +48,19 @@ function ListNoticesPage() {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { id }: { id?: string } = context.params;
+
   axios.defaults.baseURL = isProd ? prodServer : devServer;
   axios.defaults.withCredentials = true;
 
-  const res = await axios.get<NoticeType[]>('/notices');
+  const res = await axios.get<NoticeType[]>(`/notices?tag=${encodeURI(id)}`);
 
   return {
     props: {
-      notices: res.data,
+      notices: res ? res.data : [],
     },
   };
 };
 
-export default ListNoticesPage;
+export default TagListNotices;
